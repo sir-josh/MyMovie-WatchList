@@ -9,6 +9,7 @@ import MovieList from "./components/MovieList";
 import WatchedMovieList from "./components/WatchedMovieList";
 import MovieSummary from "./components/MovieSummary";
 import Loader from "./components/Loader";
+import ErrorMessage from "./components/ErrorMessage";
 
 const tempMovieData = [
 	{
@@ -56,17 +57,34 @@ const KEY = "3f3bca4f";
 
 export default function App() {
 	const [movies, setMovies] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState("");
 	const [watched, setWatched] = useState(tempWatchedData);
-	const query = "interstellar";
+	// const query = "interstellar";
+	const query = "Whiplash";
 
 	useEffect(function () {
 		async function fetchMovies() {
-            setIsLoading(true);
-			const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
-			const data = await res.json();
-			setMovies(data.Search);
-			setIsLoading(false);
+			try {
+				setIsLoading(true);
+				const res = await fetch(
+					`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+				);
+
+				if (!res.ok)
+					throw new Error(
+						"Something went wrong with fetching movies",
+					);
+				const data = await res.json();
+				if (data.Response === "False")
+					throw new Error("Movie not found!");
+				setMovies(data.Search);
+			} catch (err) {
+				console.error(err.message);
+				setError(err.message);
+			} finally {
+				setIsLoading(false);
+			}
 		}
 		fetchMovies();
 	}, []);
@@ -80,7 +98,9 @@ export default function App() {
 			</Navbar>
 			<Main>
 				<ListMovieBox>
-					{isLoading ? <Loader /> :<MovieList movies={movies} />}
+					{isLoading && <Loader />}
+					{!isLoading && !error && <MovieList movies={movies} />}
+					{error && <ErrorMessage message={error} />}
 				</ListMovieBox>
 
 				<ListMovieBox>
@@ -91,3 +111,7 @@ export default function App() {
 		</>
 	);
 }
+// const res = await fetch(`http://www.omdbapi.com/?s=${query}&apikey=${KEY}`)
+// .catch(()=> {
+//     throw new Error("this is where error happened");
+// })
