@@ -10,6 +10,7 @@ import WatchedMovieList from "./components/WatchedMovieList";
 import MovieSummary from "./components/MovieSummary";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
+import MovieDetails from "./components/MovieDetails";
 
 const tempMovieData = [
 	{
@@ -61,7 +62,15 @@ export default function App() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
 	const [watched, setWatched] = useState(tempWatchedData);
-	// const query = "interstellar";
+	const [selectedId, setSelectedId] = useState(null);
+
+	function handleSelectMovie(id) {
+		setSelectedId((selectedId) => (id === selectedId ? null : id));
+	}
+
+	function handleCloseMovie() {
+		setSelectedId(null);
+	}
 
 	useEffect(
 		function () {
@@ -110,13 +119,27 @@ export default function App() {
 			<Main>
 				<ListMovieBox>
 					{isLoading && <Loader />}
-					{!isLoading && !error && <MovieList movies={movies} />}
+					{!isLoading && !error && (
+						<MovieList
+							movies={movies}
+							onSelectMovie={handleSelectMovie}
+						/>
+					)}
 					{error && <ErrorMessage message={error} />}
 				</ListMovieBox>
 
 				<ListMovieBox>
-					<MovieSummary watched={watched} />
-					<WatchedMovieList watched={watched} />
+					{selectedId ? (
+						<MovieDetails
+							selectedId={selectedId}
+							onCloseMovie={handleCloseMovie}
+						/>
+					) : (
+						<>
+							<MovieSummary watched={watched} />
+							<WatchedMovieList watched={watched} />
+						</>
+					)}
 				</ListMovieBox>
 			</Main>
 		</>
