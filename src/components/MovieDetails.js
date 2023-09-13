@@ -22,7 +22,9 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
 	} = movie;
 
 	const isMovieRated = watched.find((movie) => movie.imdbID === selectedId);
-	const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
+	const watchedUserRating = watched.find(
+		(movie) => movie.imdbID === selectedId,
+	)?.userRating;
 
 	function handleAdd() {
 		const newWatchedMovie = {
@@ -51,6 +53,18 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
 		}
 		getMovieDetails();
 	}, [selectedId]);
+
+	useEffect(
+		function () {
+			if (!title) return;
+			document.title = `Movie | ${title}`;
+
+			return function () {
+				document.title = "My Movie Tracker";
+			};
+		},
+		[title],
+	);
 
 	return (
 		<div className="details">
@@ -93,7 +107,11 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
 									)}
 								</>
 							) : (
-								<p> You rated this movie ⭐ {watchedUserRating}/10</p>
+								<p>
+									{" "}
+									You rated this movie ⭐ {watchedUserRating}
+									/10
+								</p>
 							)}
 						</div>
 						<p>
