@@ -11,7 +11,9 @@ import MovieSummary from "./components/MovieSummary";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
 import MovieDetails from "./components/MovieDetails";
+import { KEY } from "./api/apiConst";
 
+// eslint-disable-next-line 
 const tempMovieData = [
 	{
 		imdbID: "tt1375666",
@@ -54,13 +56,12 @@ const tempWatchedData = [
 	},
 ];
 
-const KEY = "3f3bca4f";
-
 export default function App() {
 	const [movies, setMovies] = useState([]);
 	const [query, setQuery] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
+	// eslint-disable-next-line 
 	const [watched, setWatched] = useState(tempWatchedData);
 	const [selectedId, setSelectedId] = useState(null);
 
