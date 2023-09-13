@@ -3,9 +3,10 @@ import { KEY } from "../api/apiConst";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
 
-const MovieDetails = ({ selectedId, onCloseMovie }) => {
+const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
 	const [movie, setMovie] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
+	const [userRating, setUserRating] = useState("");
 
 	const {
 		Title: title,
@@ -19,6 +20,23 @@ const MovieDetails = ({ selectedId, onCloseMovie }) => {
 		Genre: genre,
 		Plot: plot,
 	} = movie;
+
+	const isMovieRated = watched.find((movie) => movie.imdbID === selectedId);
+	const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
+
+	function handleAdd() {
+		const newWatchedMovie = {
+			imdbID: selectedId,
+			title,
+			year,
+			poster,
+			userRating,
+			imdbRating: Number(imdbRating),
+			runtime: Number(runtime.split(" ").at(0)),
+		};
+		onAddWatched(newWatchedMovie);
+		onCloseMovie();
+	}
 
 	useEffect(() => {
 		async function getMovieDetails() {
@@ -48,8 +66,7 @@ const MovieDetails = ({ selectedId, onCloseMovie }) => {
 						<div className="details-overview">
 							<h2>{title}</h2>
 							<p>
-								{" "}
-								{released} &bull; {runtime}{" "}
+								{released} &bull; {runtime}
 							</p>
 							<p>{genre}</p>
 							<p>
@@ -60,13 +77,30 @@ const MovieDetails = ({ selectedId, onCloseMovie }) => {
 					</header>
 					<section>
 						<div className="rating">
-							<StarRating maxRating={10} size={24} />
+							{!isMovieRated ? (
+								<>
+									<StarRating
+										maxRating={10}
+										size={24}
+										onSetRating={setUserRating}
+									/>
+									{userRating > 0 && (
+										<button
+											className="btn-add"
+											onClick={handleAdd}>
+											+ Add to list
+										</button>
+									)}
+								</>
+							) : (
+								<p> You rated this movie ⭐ {watchedUserRating}/10</p>
+							)}
 						</div>
 						<p>
 							<em>{plot}</em>
 						</p>
 						<p>
-							<b>Starring &nbsp;  </b>
+							<b>Starring &nbsp; </b>
 							<span className="sc"> {actors}</span>
 						</p>
 						<p>

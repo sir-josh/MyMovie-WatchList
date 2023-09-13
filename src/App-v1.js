@@ -7,13 +7,13 @@ import NumResults from "./components/NumResults";
 import ListMovieBox from "./components/ListMovieBox";
 import MovieList from "./components/MovieList";
 import WatchedMovieList from "./components/WatchedMovieList";
-import MovieSummary from "./components/MovieSummary";
+import WatchedMovieSummary from "./components/WatchedMovieSummary";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
 import MovieDetails from "./components/MovieDetails";
 import { KEY } from "./api/apiConst";
 
-// eslint-disable-next-line 
+// eslint-disable-next-line
 const tempMovieData = [
 	{
 		imdbID: "tt1375666",
@@ -61,8 +61,7 @@ export default function App() {
 	const [query, setQuery] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
-	// eslint-disable-next-line 
-	const [watched, setWatched] = useState(tempWatchedData);
+	const [watched, setWatched] = useState([]);
 	const [selectedId, setSelectedId] = useState(null);
 
 	function handleSelectMovie(id) {
@@ -71,6 +70,14 @@ export default function App() {
 
 	function handleCloseMovie() {
 		setSelectedId(null);
+	}
+
+	function handleAddWatched(movie) {
+		setWatched((watched) => [...watched, movie]);
+	}
+
+	function handleDeleteWatched(id) {
+		setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
 	}
 
 	useEffect(
@@ -134,11 +141,16 @@ export default function App() {
 						<MovieDetails
 							selectedId={selectedId}
 							onCloseMovie={handleCloseMovie}
+							onAddWatched={handleAddWatched}
+							watched={watched}
 						/>
 					) : (
 						<>
-							<MovieSummary watched={watched} />
-							<WatchedMovieList watched={watched} />
+							<WatchedMovieSummary watched={watched} />
+							<WatchedMovieList
+								watched={watched}
+								onDeleteWatched={handleDeleteWatched}
+							/>
 						</>
 					)}
 				</ListMovieBox>

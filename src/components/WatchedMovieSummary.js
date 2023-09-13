@@ -3,7 +3,7 @@ import React from "react";
 const average = (arr) =>
 	arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const MovieSummary = ({ watched }) => {
+const WatchedMovieSummary = ({ watched }) => {
 	const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
 	const avgUserRating = average(watched.map((movie) => movie.userRating));
 	const avgRuntime = average(watched.map((movie) => movie.runtime));
@@ -18,19 +18,23 @@ const MovieSummary = ({ watched }) => {
 				</p>
 				<p>
 					<span>⭐️</span>
-					<span>{avgImdbRating}</span>
+					<span>
+						{Math.round((avgImdbRating + Number.EPSILON) * 100) / 100}
+					</span>
 				</p>
 				<p>
 					<span>🌟</span>
-					<span>{avgUserRating}</span>
+					<span>
+						{Math.round((avgUserRating + Number.EPSILON) * 100) / 100}
+					</span>
 				</p>
 				<p>
 					<span>⏳</span>
-					<span>{avgRuntime} min</span>
+					<span>{avgRuntime.toFixed(1)} min</span>
 				</p>
 			</div>
 		</div>
 	);
 };
 
-export default MovieSummary;
+export default WatchedMovieSummary;
