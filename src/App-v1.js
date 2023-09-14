@@ -34,7 +34,7 @@ const tempMovieData = [
 		Poster: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
 	},
 ];
-
+// eslint-disable-next-line
 const tempWatchedData = [
 	{
 		imdbID: "tt1375666",
@@ -61,8 +61,11 @@ export default function App() {
 	const [query, setQuery] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
-	const [watched, setWatched] = useState([]);
 	const [selectedId, setSelectedId] = useState(null);
+	const [watched, setWatched] = useState(function(){
+		const storedValue = localStorage.getItem("watched");
+		return JSON.parse(storedValue);
+	});
 
 	function handleSelectMovie(id) {
 		setSelectedId((selectedId) => (id === selectedId ? null : id));
@@ -79,6 +82,10 @@ export default function App() {
 	function handleDeleteWatched(id) {
 		setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
 	}
+
+	useEffect(function(){
+		localStorage.setItem("watched", JSON.stringify(watched));
+	},[watched]);
 
 	useEffect(
 		function () {
