@@ -51,6 +51,7 @@ export function useMovies(query, callback) {
 				controller.abort();
 			};
 		},
+        //eslint-disable-next-line
 		[query],
 	);
 
